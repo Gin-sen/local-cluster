@@ -1,3 +1,20 @@
+# Ansible local setup
+
+Prerequisites:
+- Linux or WSL
+- Python (dont `python3.12-venv`)
+
+Activate virtal environment and install Ansible:
+```bash
+python3 -m venv .virtualenv
+source .virtualenv/bin/activate
+python3 -m pip install --upgrade pip
+python3 -m pip install --user ansible
+python3 -m pip install ansible-dev-tools
+ansible --version
+ansible-community --version
+```
+
 # Kind and Istio setup
 
 
@@ -59,3 +76,4 @@ kubectl label ns metallb-system pod-security.kubernetes.io/warn=privileged
 
 kubectl create namespace istio-ingress
 helm install istio-ingressgateway istio/gateway -n istio-ingress
+

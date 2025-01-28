@@ -1,0 +1,4 @@
+{
+    "ansible.python.activationScript": "/home/gin-sen/git/infra/local-cluster/.virtualenv/bin/activate",
+    "ansible.python.interpreterPath": "/home/gin-sen/git/infra/local-cluster/.virtualenv/bin/python"
+}

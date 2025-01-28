@@ -1,0 +1,6 @@
+---
+- name: Example playbook
+  hosts: localhost
+  roles:
+    - role: local.create_kube_cluster.allocate_docker_resources
+    - role: local.create_kube_cluster.install_kind

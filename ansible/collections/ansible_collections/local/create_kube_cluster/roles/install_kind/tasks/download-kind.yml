@@ -1,0 +1,11 @@
+---
+
+- name: Get the binary path for kind
+  ansible.builtin.set_fact:
+    kind_binary_path: "v{{ install_kind_version }}/kind-linux-amd64"
+
+- name: Ensure kind binary is downloaded
+  ansible.builtin.get_url:
+    url: "{{ install_kind_release_baseurl }}/{{ kind_binary_path }}"
+    dest: "/tmp/kind-{{ install_kind_version }}"
+    mode: "0755"

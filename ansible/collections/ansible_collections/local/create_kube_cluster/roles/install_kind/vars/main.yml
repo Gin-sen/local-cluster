@@ -1,0 +1,4 @@
+---
+
+install_kind_release_baseurl: https://github.com/kubernetes-sigs/kind/releases/download
+install_kind_github_api: https://api.github.com/repos/kubernetes-sigs/kind

@@ -1,0 +1,9 @@
+#jinja2: trim_blocks:False
+# Settings apply across all Linux distros running on WSL 2
+[wsl2]
+
+# Sets the VM to use {{ cpu }} virtual processors
+processors={{ cpu }}
+
+# Limits VM memory to use no more than {{ ram }}, this can be set as whole numbers using GB or MB
+memory={{ ram }}

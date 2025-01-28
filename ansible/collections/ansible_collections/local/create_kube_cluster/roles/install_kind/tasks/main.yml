@@ -1,0 +1,17 @@
+---
+
+- name: "[Debug] Import pre-checks"
+  ansible.builtin.import_tasks: pre-checks.yml
+
+- name: "[Debug] Import get-version"
+  ansible.builtin.import_tasks: get-version.yml
+  when: install_kind_version is not defined or not install_kind_version
+
+- name: "[Debug] Import download-kind"
+  ansible.builtin.import_tasks: download-kind.yml
+
+- name: "[Debug] Import install-kind"
+  ansible.builtin.import_tasks: install-kind.yml
+
+- name: "[Debug] Import post-checks"
+  ansible.builtin.import_tasks: post-checks.yml
