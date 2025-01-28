@@ -1,0 +1,8 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: {{ include "sample.fullname" . }}
+  labels:
+    {{- include "sample.labels" . | nindent 4 }}
+spec:
+  host: ratings.prod.svc.cluster.local

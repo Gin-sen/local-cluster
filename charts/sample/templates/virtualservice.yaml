@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: {{ include "sample.fullname" . }}
+  labels:
+    {{- include "sample.labels" . | nindent 4 }}
+spec:
+  hosts:
+  {{- with .Values.gateway.hosts }}
+  - {{- . }} # interpreted as value.namespace.svc.cluster.local
+  {{- end }}
+  gateways:
+  - {{- .Values.gateway.name }}
+  http:
+  - match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: value # interpreted as reviews.namespace.svc.cluster.local
