@@ -8,3 +8,4 @@ wsl: true
 cpu: 8
 ram: 16GB
 
+become_password: azqazq123

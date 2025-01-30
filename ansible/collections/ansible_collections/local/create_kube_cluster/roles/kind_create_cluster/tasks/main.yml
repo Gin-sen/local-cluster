@@ -1,0 +1,14 @@
+---
+# tasks file for kind_create_cluster
+- name: Run kind command
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command: "kind create cluster --name istio-testing --config ../manifests/kind/kind-config.yaml"
+
+- name: "[Debug] print kind command result"
+  ansible.builtin.debug:
+    msg: "{{ my_output }}"
+
+
+- name: Run kind command
+  ansible.builtin.command: "kind delete clusters istio-testing"

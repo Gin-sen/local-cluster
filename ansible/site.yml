@@ -2,5 +2,16 @@
 - name: Example playbook
   hosts: localhost
   roles:
+  # 1. Host configuration
     - role: local.create_kube_cluster.allocate_docker_resources
+  # 2. Tooling install
+    # - role: local.create_kube_cluster.install_helm
     - role: local.create_kube_cluster.install_kind
+  # 3. Create Kubernetes cluster
+    - role: local.create_kube_cluster.kind_create_cluster
+  # 4. Setup Monitoring
+    # - role: local.create_kube_cluster.deploy_prometheus_stack
+  # 5. Install MetalLb
+  # 6. Install Istio
+  # 7. Deploy a Gateway
+  # 8. Deploy a test

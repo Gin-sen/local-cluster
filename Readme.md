@@ -9,7 +9,7 @@ Activate virtal environment and install Ansible:
 python3 -m venv .virtualenv
 source .virtualenv/bin/activate
 python3 -m pip install --upgrade pip
-python3 -m pip install --user ansible
+python3 -m pip install ansible
 python3 -m pip install ansible-dev-tools
 ansible --version
 ansible-community --version
