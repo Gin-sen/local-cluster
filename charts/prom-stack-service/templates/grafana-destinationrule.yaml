@@ -1,0 +1,12 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: {{ include "prom-stack-service.fullname-grafana" . }}
+  labels:
+    {{ include "prom-stack-service.labels-grafana" . | nindent 4 }}
+spec:
+  host: {{ .Values.grafana.service.name }}
+  subsets:
+  - name: {{ include "prom-stack-service.fullname-grafana" . }}
+    labels:
+      {{ .Values.grafana.service.selectorLabels | toYaml | nindent 6 }}

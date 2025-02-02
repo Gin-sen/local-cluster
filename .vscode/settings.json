@@ -1,4 +1,8 @@
 {
     "ansible.python.activationScript": "/home/gin-sen/git/infra/local-cluster/.virtualenv/bin/activate",
-    "ansible.python.interpreterPath": "/home/gin-sen/git/infra/local-cluster/.virtualenv/bin/python"
+    "ansible.python.interpreterPath": "/home/gin-sen/git/infra/local-cluster/.virtualenv/bin/python",
+    "ansible.executionEnvironment.containerEngine": "docker",
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/ansible/ansible-navigator/main/src/ansible_navigator/data/ansible-navigator.json": "file:///home/gin-sen/git/infra/local-cluster/ansible/ansible-navigator.yml"
+    }
 }

@@ -195,13 +195,44 @@ defaultRules:
 
 ## Provide custom recording or alerting rules to be deployed into the cluster.
 ##
-additionalPrometheusRulesMap: {}
-#  rule-name:
-#    groups:
-#    - name: my_group
-#      rules:
-#      - record: my_record
-#        expr: 100 * my_record
+additionalPrometheusRulesMap:
+  istio-prometheus:
+    groups:
+    - name: "istio.metricsAggregation-rules"
+      interval: 5s
+      rules:
+      - record: "workload:istio_requests_total"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_requests_total)"
+
+      - record: "workload:istio_request_duration_milliseconds_count"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_request_duration_milliseconds_count)"
+      - record: "workload:istio_request_duration_milliseconds_sum"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_request_duration_milliseconds_sum)"
+      - record: "workload:istio_request_duration_milliseconds_bucket"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_request_duration_milliseconds_bucket)"
+
+      - record: "workload:istio_request_bytes_count"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_request_bytes_count)"
+      - record: "workload:istio_request_bytes_sum"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_request_bytes_sum)"
+      - record: "workload:istio_request_bytes_bucket"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_request_bytes_bucket)"
+
+      - record: "workload:istio_response_bytes_count"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_response_bytes_count)"
+      - record: "workload:istio_response_bytes_sum"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_response_bytes_sum)"
+      - record: "workload:istio_response_bytes_bucket"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_response_bytes_bucket)"
+
+      - record: "workload:istio_tcp_sent_bytes_total"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_tcp_sent_bytes_total)"
+      - record: "workload:istio_tcp_received_bytes_total"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_tcp_received_bytes_total)"
+      - record: "workload:istio_tcp_connections_opened_total"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_tcp_connections_opened_total)"
+      - record: "workload:istio_tcp_connections_closed_total"
+        expr: "sum without(instance, kubernetes_namespace, kubernetes_pod_name) (istio_tcp_connections_closed_total)"
 
 ##
 global:
@@ -2789,7 +2820,7 @@ prometheusOperator:
   ## Service type
   ## NodePort, ClusterIP, LoadBalancer
   ##
-    type: LoadBalancer
+    type: ClusterIP
 
     ## List of IP addresses at which the Prometheus server service is available
     ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
@@ -3669,7 +3700,7 @@ prometheus:
 
     ## Exemplars related settings that are runtime reloadable.
     ## It requires to enable the exemplar storage feature to be effective.
-    exemplars: ""
+    exemplars: {}
       ## Maximum number of exemplars stored in memory for all series.
       ## If not set, Prometheus uses its default value.
       ## A value of zero or less than zero disables the storage.
@@ -4341,11 +4372,35 @@ prometheus:
   #      - nodes/proxy
   #    verbs: [ "get", "list", "watch" ]
 
-  additionalServiceMonitors: []
+  additionalServiceMonitors:
   ## Name of the ServiceMonitor to create
   ##
   # - name: ""
-
+    - name: "istio-federation"
+      additionalLabels:
+        app.kubernetes.io/name: istio-prometheus
+      namespaceSelector: 
+        matchNames:
+        - istio-system
+      selector:
+        matchLabels:
+          app: prometheus
+      endpoints:
+      - interval: 30s
+        scrapeTimeout: 30s
+        params:
+          'match[]':
+          - '{__name__=~"workload:(.*)"}'
+          - '{__name__=~"pilot(.*)"}'
+        path: /federate
+        targetPort: 9090
+        honorLabels: true
+        metricRelabelings:
+        - sourceLabels: ["__name__"]
+          regex: 'workload:(.*)'
+          targetLabel: "__name__"
+          action: replace
+      
     ## Additional labels to set used for the ServiceMonitorSelector. Together with standard labels from
     ## the chart
     ##

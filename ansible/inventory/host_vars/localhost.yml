@@ -8,4 +8,4 @@ wsl: true
 cpu: 8
 ram: 16GB
 
-become_password: azqazq123
+ansible_become_password: azqazq123

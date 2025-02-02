@@ -1,0 +1,30 @@
+# Default values for prom-stack-service.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+gateway: istio-ingress/istio-ingressgateway
+prometheus:
+  hosts:
+  - prometheus.mainframe.local
+  service:
+    name: kube-prometheus-stack-prometheus
+    port: 9090
+    selectorLabels:
+      app: kube-prometheus-stack-prometheus
+      app.kubernetes.io/instance: kube-prometheus-stack
+      
+
+
+grafana:
+  hosts:
+  - grafana.mainframe.local
+  service:
+    name: kube-prometheus-stack-grafana
+    port: 80
+    selectorLabels:
+      app: kube-prometheus-stack-grafana
+      app.kubernetes.io/instance: kube-prometheus-stack

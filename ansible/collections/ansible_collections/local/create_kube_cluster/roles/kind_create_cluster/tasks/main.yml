@@ -3,12 +3,149 @@
 - name: Run kind command
   register: my_output
   changed_when: my_output.rc != 0
-  ansible.builtin.command: "kind create cluster --name istio-testing --config ../manifests/kind/kind-config.yaml"
+  ansible.builtin.command:
+    cmd: >
+      kind create cluster --name istio-testing
+        --config ../manifests/kind/kind-config.yaml
 
 - name: "[Debug] print kind command result"
   ansible.builtin.debug:
     msg: "{{ my_output }}"
 
+- name: Deploy Prom stack
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      helm install -n monitoring --create-namespace
+        -f ../values/prometheus-stack.yaml
+        kube-prometheus-stack
+        prometheus-community/kube-prometheus-stack
 
-- name: Run kind command
-  ansible.builtin.command: "kind delete clusters istio-testing"
+- name: Namespace MetalLB
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      kubectl create ns metallb-system
+
+- name: Label MetalLB
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      kubectl label ns metallb-system
+        pod-security.kubernetes.io/audit=privileged
+        pod-security.kubernetes.io/enforce=privileged
+        pod-security.kubernetes.io/warn=privileged
+
+- name: Secret MetalLB
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      kubectl create secret generic
+        -n metallb-system
+        metallb-memberlist
+        --from-literal=secretkey="$(openssl rand -base64 128)"
+
+- name: Deploy MetalLB
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      helm install -n metallb-system
+        -f ../values/metallb.yaml
+        metallb
+        metallb/metallb
+
+- name: Wait for all metallb pods become created
+  ansible.builtin.command: "kubectl get po --namespace=metallb-system --selector app.kubernetes.io/name=metallb --output=jsonpath='{.items[*].metadata.name}'"
+  register: metallb_pods_created
+  until: item in metallb_pods_created.stdout
+  changed_when: metallb_pods_created.rc != 0
+  retries: 10
+  delay: 30
+  with_items:
+    - metallb-controller
+    - metallb-speaker
+
+- name: Wait for metallb pods become ready
+  changed_when: metallb_pods_ready.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      kubectl wait --namespace=metallb-system --for=condition=Ready pods --selector app.kubernetes.io/name=metallb --timeout=600s
+  register: metallb_pods_ready
+
+- name: Wait for metallb pods become ready
+  ansible.builtin.debug:
+    msg: var={{ metallb_pods_ready.stdout_lines }}
+
+- name: Deploy MetalLB objects
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      kubectl apply -n metallb-system
+        -f ../manifests/metallb/ipaddresspool.yaml
+        -f ../manifests/metallb/L2Advertisement.yaml
+
+- name: Wait for all prometheus pods become created
+  ansible.builtin.command: "kubectl get po --namespace=monitoring --selector release=kube-prometheus-stack --output=jsonpath='{.items[*].metadata.name}'"
+  changed_when: prometheus_pods_created.rc != 0
+  register: prometheus_pods_created
+  until: item in metallb_pods_created.stdout
+  retries: 10
+  delay: 30
+  with_items:
+    - kube-prometheus-stack-grafana
+    - kube-prometheus-stack-kube-state-metrics
+    - kube-prometheus-stack-operator
+    - kube-prometheus-stack-prometheus-node-exporter
+    - prometheus-kube-prometheus-stack-prometheus
+
+- name: Wait for prometheus pods become ready
+  changed_when: prometheus_pods_ready.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      kubectl wait --namespace=monitoring --for=condition=Ready pods --selector release=kube-prometheus-stack --timeout=600s
+  register: prometheus_pods_ready
+
+- name: Wait for prometheus pods become ready
+  ansible.builtin.debug:
+    msg: var={{ metallb_pods_ready.stdout }}
+
+
+- name: Deploy Istio objects
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
+
+
+- name: Deploy IstioD objects
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      helm install istiod istio/istiod -n istio-system --wait
+
+# - name: Create ingress namespace
+#   register: my_output
+#   changed_when: my_output.rc != 0
+#   ansible.builtin.command:
+#     cmd: >
+#       kubectl create namespace istio-ingress
+
+# - name: Deploy Istio Gatway
+#   register: my_output
+#   changed_when: my_output.rc != 0
+#   ansible.builtin.command:
+#     cmd: >
+#       helm install -f ../values/gateway.yaml istio-ingressgateway istio/gateway -n istio-ingress
+
+# - name: Run kind command
+#   register: my_output
+#   changed_when: my_output.rc != 0
+#   ansible.builtin.command: "kind delete clusters istio-testing"

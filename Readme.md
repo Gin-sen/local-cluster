@@ -58,8 +58,16 @@ kubectl create ns monitoring
 kubectl label ns monitoring istio-injection=enabled
 helm install kube-prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring
 
+<!-- 
+## Installing Cloud Provider KIND 
+go install sigs.k8s.io/cloud-provider-kind@latest
+~/go/bin/cloud-provider-kind -enable-lb-port-mapping
+
+kubectl apply -f https://kind.sigs.k8s.io/examples/loadbalancer/usage.yaml -->
+
 
 ## Install MetlalLB
+
 ```bash
 helm repo add metallb https://metallb.github.io/metallb
 helm install metallb metallb/metallb -f metallb.yaml -n metallb-system
@@ -70,6 +78,7 @@ kubectl label ns metallb-system pod-security.kubernetes.io/audit=privileged
 kubectl label ns metallb-system pod-security.kubernetes.io/enforce=privileged
 kubectl label ns metallb-system pod-security.kubernetes.io/warn=privileged
 
+kubectl apply -n metallb-system -f ../manifests/metallb/ipaddresspool.yaml
 ```
 
 ## Install a shared gateway
