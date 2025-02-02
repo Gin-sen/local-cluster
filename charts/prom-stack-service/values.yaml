@@ -6,7 +6,7 @@
 nameOverride: ""
 fullnameOverride: ""
 
-gateway: istio-ingress/istio-ingressgateway
+gateway: istio-ingress/istio-ingress-gateway
 prometheus:
   hosts:
   - prometheus.mainframe.local
@@ -14,8 +14,8 @@ prometheus:
     name: kube-prometheus-stack-prometheus
     port: 9090
     selectorLabels:
-      app: kube-prometheus-stack-prometheus
-      app.kubernetes.io/instance: kube-prometheus-stack
+      app.kubernetes.io/name=prometheus
+      operator.prometheus.io/name=kube-prometheus-stack-prometheus
       
 
 
@@ -26,5 +26,5 @@ grafana:
     name: kube-prometheus-stack-grafana
     port: 80
     selectorLabels:
-      app: kube-prometheus-stack-grafana
-      app.kubernetes.io/instance: kube-prometheus-stack
+      app.kubernetes.io/instance=kube-prometheus-stack
+      app.kubernetes.io/name=grafana

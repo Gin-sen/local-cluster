@@ -19,6 +19,6 @@ spec:
     route:
     - destination:
         host: {{ .Values.grafana.service.name }}
-        subsets: {{ include "prom-stack-service.fullname-grafana" . }}
+        # subsets: {{ include "prom-stack-service.fullname-grafana" . }}
         port: 
           number: {{ .Values.grafana.service.port | int }}

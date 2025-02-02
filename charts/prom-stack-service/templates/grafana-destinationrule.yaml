@@ -1,3 +1,4 @@
+{{/*
 apiVersion: networking.istio.io/v1
 kind: DestinationRule
 metadata:
@@ -10,3 +11,5 @@ spec:
   - name: {{ include "prom-stack-service.fullname-grafana" . }}
     labels:
       {{ .Values.grafana.service.selectorLabels | toYaml | nindent 6 }}
+
+*/}}

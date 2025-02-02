@@ -1,12 +1,14 @@
-apiVersion: networking.istio.io/v1
-kind: DestinationRule
-metadata:
-  name: {{ include "prom-stack-service.fullname-prometheus" . }}
-  labels:
-    {{ include "prom-stack-service.labels-prometheus" . | nindent 4 }}
-spec:
-  host: {{ .Values.prometheus.service.name }}
-  subsets:
-  - name: {{ include "prom-stack-service.fullname-prometheus" . }}
-    labels:
-      {{ .Values.prometheus.service.selectorLabels | toYaml | nindent 6 }}
+{{/*
+# apiVersion: networking.istio.io/v1
+# kind: DestinationRule
+# metadata:
+#   name: {{ include "prom-stack-service.fullname-prometheus" . }}
+#   labels:
+#     {{ include "prom-stack-service.labels-prometheus" . | nindent 4 }}
+# spec:
+#   host: {{ .Values.prometheus.service.name }}
+#   subsets:
+#   - name: {{ include "prom-stack-service.fullname-prometheus" . }}
+#     labels:
+#       {{ .Values.prometheus.service.selectorLabels | toYaml | nindent 6 }}
+*/}}
