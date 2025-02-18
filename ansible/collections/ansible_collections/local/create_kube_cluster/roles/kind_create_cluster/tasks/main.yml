@@ -27,7 +27,11 @@
   changed_when: my_output.rc != 0
   ansible.builtin.command:
     cmd: >
-      helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
+      helm install
+      istio-base istio/base
+      -n istio-system
+      --set defaultRevision=default
+      --create-namespace
 
 
 - name: Deploy IstioD objects
@@ -35,7 +39,8 @@
   changed_when: my_output.rc != 0
   ansible.builtin.command:
     cmd: >
-      helm install istiod istio/istiod -n istio-system --wait
+      helm install istiod istio/istiod
+      -n istio-system --wait
 
 - name: Create ingress namespace
   register: my_output
@@ -49,21 +54,51 @@
   changed_when: my_output.rc != 0
   ansible.builtin.command:
     cmd: >
-      helm install -f ../values/gateway.yaml istio-ingressgateway istio/gateway -n istio-ingress
+      helm install -f ../values/gateway.yaml
+      istio-ingressgateway istio/gateway
+      -n istio-ingress
 
 - name: Deploy Istio Gateway
   register: my_output
   changed_when: my_output.rc != 0
   ansible.builtin.command:
     cmd: >
-      kubectl apply -f ../manifests/gateway/istio-gateway.yaml -n istio-ingress
+      kubectl apply
+      -f ../manifests/gateway/istio-gateway.yaml
+      -n istio-ingress
 
 - name: Deploy Prom services
   register: my_output
   changed_when: my_output.rc != 0
   ansible.builtin.command:
     cmd: >
-      helm upgrade --install -n monitoring prom-stack-service ../charts/prom-stack-service
+      helm upgrade --install
+      -n monitoring
+      prom-stack-service ../charts/prom-stack-service
+
+
+- name: Deploy Kiali
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      helm install
+      -f ../values/kiali.yaml
+      --set cr.create=true
+      --set cr.namespace=istio-system
+      --set cr.spec.auth.strategy="anonymous"
+      --namespace kiali-operator
+      --create-namespace
+      kiali-operator kiali/kiali-operator
+
+- name: Deploy Kiali services
+  register: my_output
+  changed_when: my_output.rc != 0
+  ansible.builtin.command:
+    cmd: >
+      helm upgrade --install
+      -n istio-system
+      kiali-service ../charts/kiali-service
 
 # - name: Run kind command
 #   register: my_output

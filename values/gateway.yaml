@@ -22,7 +22,7 @@ service:
   loadBalancerSourceRanges: []
   externalTrafficPolicy: ""
   externalIPs:
-  - 172.18.0.5
+  - 172.18.0.9
   ipFamilyPolicy: ""
   ipFamilies: []
   ## Whether to automatically allocate NodePorts (only for LoadBalancers).

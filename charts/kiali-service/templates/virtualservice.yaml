@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: {{ include "kiali-service.fullname" . }}
+  labels:
+    {{ include "kiali-service.labels" . | nindent 4 }}
+spec:
+  hosts:
+  {{ range .Values.hosts }}
+    - {{ . }}
+  {{- end }}
+  gateways:
+  - {{ .Values.gateway }}
+  http:
+  - name: "all-routes"
+    match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: {{ .Values.service.name }}
+        # host: {{ printf "%s.%s.svc.cluster.local" .Values.service.name .Release.Namespace }}
+        # subsets: {{ include "kiali-service.fullname" . }}
+        port: 
+          number: {{ .Values.service.port | int }}
