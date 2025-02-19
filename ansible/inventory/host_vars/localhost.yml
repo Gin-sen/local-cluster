@@ -1,0 +1,11 @@
+---
+server_name: Gin-Mainframe
+
+# Conf WSL
+wsl: true
+
+# Docker Desktop limits
+cpu: 8
+ram: 16GB
+
+ansible_become_password: azqazq123

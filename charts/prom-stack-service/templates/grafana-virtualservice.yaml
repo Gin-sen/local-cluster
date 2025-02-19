@@ -1,0 +1,24 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: {{ include "prom-stack-service.fullname-grafana" . }}
+  labels:
+    {{- include "prom-stack-service.labels-grafana" . | nindent 4 }}
+spec:
+  hosts:
+  {{- range .Values.grafana.hosts }}
+  - {{ . }}
+  {{- end }}
+  gateways:
+  - {{ .Values.gateway }}
+  http:
+  - name: "all-routes"
+    match:
+    - uri:
+        prefix: "/"
+    route:
+    - destination:
+        host: {{ .Values.grafana.service.name }}
+        # subsets: {{ include "prom-stack-service.fullname-grafana" . }}
+        port: 
+          number: {{ .Values.grafana.service.port | int }}

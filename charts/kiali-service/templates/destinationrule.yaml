@@ -1,0 +1,14 @@
+{{/*
+# apiVersion: networking.istio.io/v1
+# kind: DestinationRule
+# metadata:
+#   name: {{ include "kiali-service.fullname" . }}
+#   labels:
+#     {{ include "kiali-service.labels" . | nindent 4 }}
+# spec:
+#   host: {{ .Values.service.name }}
+#   subsets:
+#   - name: {{ include "kiali-service.fullname" . }}
+#     labels:
+#       {{ .Values.service.selectorLabels | toYaml | nindent 6 }}
+*/}}

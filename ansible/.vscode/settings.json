@@ -1,0 +1,3 @@
+{
+    "ansible.python.interpreterPath": "/home/gin-sen/git/infra/local-cluster/.virtualenv/bin/python"
+}

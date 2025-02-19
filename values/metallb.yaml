@@ -227,8 +227,12 @@ controller:
     # limits:
       # cpu: 100m
       # memory: 100Mi
-  nodeSelector: {}
-  tolerations: []
+  nodeSelector:
+    kubernetes.io/hostname: "istio-testing-control-plane"
+  tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
   priorityClassName: ""
   runtimeClassName: ""
   affinity: {}

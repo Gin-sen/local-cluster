@@ -1,0 +1,7 @@
+---
+
+# Use a specific version of kind, eg. `1.6.2`. Specify `false` for latest.
+install_kind_version: false
+
+# Installation directory for kind.
+install_kind_dir: "/usr/local/bin"

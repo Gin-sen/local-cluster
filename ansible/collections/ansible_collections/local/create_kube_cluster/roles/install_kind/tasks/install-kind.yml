@@ -1,0 +1,38 @@
+---
+
+- name: Ensure kind_install_dir exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ install_kind_dir }}"
+    state: directory
+    mode: '1755'
+
+- name: Ensure existing kind package is moved to keep an copy of the old version
+  become: true
+  ansible.builtin.command: >
+      mv {{ install_kind_dir }}/kind
+      {{ install_kind_dir }}/kind-{{ kind_check_existing_version.stdout_lines[0] }}
+  register: my_output # <- Registers the command output.
+  changed_when: my_output.rc != 0 # <- Uses the return code to define when the task has changed.
+  when:
+    kind_check_existing.stat.islnk is defined
+    and not kind_check_existing.stat.islnk
+    and kind_check_existing_version.stdout_lines[0] != install_kind_version
+
+- name: Ensure kind binary is copied to the installation directory
+  become: true
+  ansible.builtin.copy:
+    src: "/tmp/kind-{{ install_kind_version }}"
+    dest: "{{ install_kind_dir }}/kind-{{ install_kind_version }}"
+    remote_src: true
+    mode: "0755"
+  when: not kind_check_existing.stat.exists
+        or (kind_check_existing.stat.exists
+            and kind_check_existing_version.stdout_lines[0] != install_kind_version)
+
+- name: Ensure kind package is symlinked
+  become: true
+  ansible.builtin.file:
+    src: "{{ install_kind_dir }}/kind-{{ install_kind_version }}"
+    dest: "{{ install_kind_dir }}/kind"
+    state: link
