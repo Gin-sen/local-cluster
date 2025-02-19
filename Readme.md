@@ -40,9 +40,20 @@ ansible-playbook site.yml
 
 ## Urls
 
-| Service | Url | Monitoring |
-| ------- | --- | ---------- |
-| Prometheus | http://prometheus.mainframe.local | Monitoring |
+| Service | Url | Monitoring | Namespace |
+| ------- | --- | ---------- | --------- |
+| Prometheus | http://prometheus.mainframe.local | url grafana | monitoring |
+| Grafana | http://grafana.mainframe.local | Monitoring | monitoring |
+| Kiala | http://kiali.mainframe.local | Monitoring | istio-system |
+
+## Hosts
+
+```txt
+# local-cluster
+127.0.0.1 prometheus.mainframe.local
+127.0.0.1 grafana.mainframe.local
+127.0.0.1 kiali.mainframe.local
+```
 
 ## Kubernetes dashboard
 
