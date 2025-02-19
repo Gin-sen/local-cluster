@@ -2,7 +2,11 @@
 
 Prerequisites:
 - Linux or WSL
-- Python (dont `python3.12-venv`)
+- Python (with `venv`)
+- Docker (can't automate with WSL)
+- Kubectl (can't automate with WSL)
+- The latest Go version for Kind (TODO: automate ?)
+- Helm (TODO: automate ?)
 
 Activate virtal environment and install Ansible:
 ```bash
@@ -15,10 +19,8 @@ ansible --version
 ansible-community --version
 ```
 
-# Kind and Istio setup
+# Useful links
 
-- Use the latest Go version.
-- To use kind, you will also need to install docker.
 - [Install the latest version of kind](https://kind.sigs.k8s.io/docs/user/quick-start/).
 - [Increase Docker’s memory limit](https://istio.io/latest/docs/setup/platform-setup/docker/).
 
