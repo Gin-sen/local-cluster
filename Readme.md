@@ -1,7 +1,24 @@
-# Ansible local setup
+# Kind kubernetes cluster
+
+- 3 control planes nodes plus one load balancer for the control plane
+- 4 worker nodes with one working as a gateway
+- Istio (with the ingress gateway in NodePort, maybe MetalLB or the kind LB exec are the solutions)
+- Kiali (need some tuning)
+- Prometheus (some alerts to fix/mask)
+- Grafana (need to test some dashbaords)
+
+TODOS:
+
+- Jenkins
+- ArgoCD ou Flux
+- Grafana Tempo ou Jaeger
+- Opentelemetry
+
+## Ansible local setup
 
 Prerequisites:
-- Linux or WSL
+
+- WSL only (Linux incoming)
 - Python (with `venv`)
 - Docker (can't automate with WSL)
 - Kubectl (can't automate with WSL)
@@ -9,6 +26,7 @@ Prerequisites:
 - Helm (TODO: automate ?)
 
 Activate virtal environment and install Ansible:
+
 ```bash
 python3 -m venv .virtualenv
 source .virtualenv/bin/activate
@@ -19,7 +37,7 @@ ansible --version
 ansible-community --version
 ```
 
-# Useful links
+## Useful links
 
 - [Install the latest version of kind](https://kind.sigs.k8s.io/docs/user/quick-start/).
 - [Increase Docker’s memory limit](https://istio.io/latest/docs/setup/platform-setup/docker/).
@@ -46,7 +64,7 @@ ansible-playbook site.yml
 | ------- | --- | ---------- | --------- |
 | Prometheus | http://prometheus.mainframe.local | url grafana | monitoring |
 | Grafana | http://grafana.mainframe.local | Monitoring | monitoring |
-| Kiala | http://kiali.mainframe.local | Monitoring | istio-system |
+| Kiali | http://kiali.mainframe.local | Monitoring | istio-system |
 
 ## Hosts
 
