@@ -8,7 +8,8 @@
 - Grafana (need to test some dashbaords)
 
 TODOS:
-
+- Getting familiar with local storage
+- Vault
 - Jenkins
 - ArgoCD ou Flux
 - Grafana Tempo ou Jaeger
@@ -57,6 +58,8 @@ helm repo update
 cd ansible
 ansible-playbook site.yml
 ```
+
+To delete the cluster: `kind delete clusters istio-testing`
 
 ## Urls
 
