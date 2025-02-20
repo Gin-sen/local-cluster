@@ -3,6 +3,8 @@ server_name: Gin-Mainframe
 
 # Conf WSL
 wsl: true
+wslconfig_file: /mnt/c/Users/maxime.places/.wslconfig
+wslconfig_tmp_file: /mnt/c/Users/maxime.places/.wslconfig.tmp
 
 # Docker Desktop limits
 cpu: 8

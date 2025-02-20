@@ -54,6 +54,15 @@ helm repo update
 
 ## Run the playbook
 
+Customize your .wslconfig path in the `ansible/inventory/host_vars/localhost.yml` file:
+
+```yaml
+wslconfig_file: /mnt/c/Users/<your.user>/.wslconfig
+wslconfig_tmp_file: /mnt/c/Users/<your.user>/.wslconfig.tmp
+```
+
+Then run those commands:
+
 ```bash
 cd ansible
 ansible-playbook site.yml

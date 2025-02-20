@@ -5,17 +5,24 @@
   ansible.builtin.debug:
     msg: "System is WSL"
 
-- name: "[Debug] Print .wslconfig"
+
+- name: "[Debug] Is WSL"
   when: wsl
+  register: wslconfig_file_stat
+  ansible.builtin.stat:
+    path: "{{ wslconfig_file }}"
+
+- name: "[Debug] Print .wslconfig"
+  when: wsl and wslconfig_file_stat.stat.exists
   register: file_content
   ansible.builtin.debug:
-    msg: "{{ lookup('ansible.builtin.file', '/mnt/c/Users/maxim/.wslconfig') }}"
+    msg: "{{ lookup('ansible.builtin.file', wslconfig_file) }}"
 
 - name: "[Debug] Templating"
   when: wsl
   ansible.builtin.template:
     src: templates/.wslconfig.j2
-    dest: '/mnt/c/Users/maxim/.wslconfig.tmp'
+    dest: "{{ wslconfig_tmp_file }}"
     newline_sequence: "\\r\\n"
     mode: "0777"
 
@@ -23,7 +30,7 @@
   when: wsl
   register: tmp_content
   ansible.builtin.debug:
-    msg: "{{ lookup('ansible.builtin.file', '/mnt/c/Users/maxim/.wslconfig.tmp') }}"
+    msg: "{{ lookup('ansible.builtin.file', wslconfig_tmp_file) }}"
 
 - name: "[Debug] If file_content == tmp_content"
   when: wsl and (file_content == tmp_content)
@@ -33,14 +40,14 @@
 - name: "[Debug] Remove file .tmp file"
   when: wsl
   ansible.builtin.file:
-    path: '/mnt/c/Users/maxim/.wslconfig.tmp'
+    path: "{{ wslconfig_tmp_file }}"
     state: absent
 
 - name: "[Debug] Update WSL resources"
   when: wsl and not (file_content == tmp_content)
   ansible.builtin.template:
     src: templates/.wslconfig.j2
-    dest: '/mnt/c/Users/maxim/.wslconfig'
+    dest: "{{ wslconfig_file }}"
     newline_sequence: "\\r\\n"
     mode: "0777"
 
