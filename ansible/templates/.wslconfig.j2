@@ -7,3 +7,6 @@ processors={{ cpu }}
 
 # Limits VM memory to use no more than {{ ram }}, this can be set as whole numbers using GB or MB
 memory={{ ram }}
+
+# Force le cgroupv2 https://github.com/spurin/wsl-cgroupsv2
+kernelCommandLine = cgroup_no_v1=all systemd.unified_cgroup_hierarchy=1
